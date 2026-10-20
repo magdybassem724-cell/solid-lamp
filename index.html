@@ -1,0 +1,1937 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0F2B3D">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="دروس مستر باسم">
+  <title>مساعد إدارة الدروس - مستر باسم مجدي</title>
+  <style>
+    :root {
+      --primary: #1B365D;
+      --primary-light: #2B6CB0;
+      --secondary: #319795;
+      --success: #2E7D32;
+      --warning: #D97706;
+      --danger: #DC2626;
+      --purple: #6B46C1;
+      --bg: #F7FAFC;
+      --card-bg: #FFFFFF;
+      --text: #2D3748;
+      --text-muted: #718096;
+      --border: #E2E8F0;
+      --radius: 14px;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Cairo", Tahoma, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding-bottom: 85px;
+      user-select: none;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      padding: 18px 16px 14px;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 4px 15px rgba(27, 54, 93, 0.2);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-month {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .header-sub {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    /* Container */
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 14px 16px;
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .kpi-card {
+      background: var(--card-bg);
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .kpi-card.full {
+      grid-column: span 2;
+      background: linear-gradient(135deg, #1B365D, #2B6CB0);
+      color: white;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .kpi-card.full .kpi-label {
+      color: #E2E8F0;
+    }
+
+    .kpi-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .kpi-card.full .kpi-value {
+      color: #68D391;
+    }
+
+    /* Alert Banner (Overdue Reminders) */
+    .alerts-card {
+      background: #FFF5F5;
+      border: 1px solid #FED7D7;
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .alerts-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      color: var(--danger);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .alert-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      border: 1px solid #FEB2B2;
+      font-size: 12px;
+    }
+
+    .alert-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .btn-wa-sm {
+      background: #25D366;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* Action Buttons (Quick add) */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .btn-action {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--primary);
+      cursor: pointer;
+    }
+
+    .btn-action:active {
+      transform: scale(0.98);
+      background: #EDF2F7;
+    }
+
+    .btn-action.primary-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+    }
+
+    /* Section Headers */
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+      scrollbar-width: none;
+    }
+    .filter-tabs::-webkit-scrollbar { display: none; }
+
+    .tab-chip {
+      background: white;
+      border: 1px solid var(--border);
+      padding: 5px 11px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .tab-chip.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Student List Cards */
+    .student-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    .student-card.paid {
+      border-right: 5px solid var(--success);
+    }
+
+    .student-card.partial {
+      border-right: 5px solid var(--warning);
+    }
+
+    .student-card.unpaid {
+      border-right: 5px solid var(--danger);
+    }
+
+    .student-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+
+    .student-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .student-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .badge-grade {
+      background: #EBF8FF;
+      color: #2B6CB0;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 10px;
+    }
+
+    .badge-billing {
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 10px;
+    }
+    .billing-8 {
+      background: #FAF5FF;
+      color: #6B46C1;
+      border: 1px solid #E9D8FD;
+    }
+    .billing-per {
+      background: #FEFCBF;
+      color: #744210;
+      border: 1px solid #FAF089;
+    }
+
+    .status-badge {
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status-paid { background: #D1E7DD; color: #0F5132; }
+    .status-partial { background: #FFF3CD; color: #664D03; }
+    .status-unpaid { background: #F8D7DA; color: #842029; }
+
+    /* Progress bar for 8 sessions */
+    .session-tracker-box {
+      background: #F8FAFC;
+      border: 1px solid #EDF2F7;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin: 8px 0;
+    }
+
+    .progress-bar-bg {
+      background: #E2E8F0;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .progress-bar-fill {
+      background: var(--primary-light);
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+
+    .progress-bar-fill.complete {
+      background: var(--danger);
+    }
+
+    .finance-row {
+      display: flex;
+      justify-content: space-between;
+      background: #F8FAFC;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      margin: 8px 0;
+    }
+
+    .finance-item {
+      text-align: center;
+    }
+
+    .finance-item span {
+      display: block;
+      color: var(--text-muted);
+      font-size: 10px;
+    }
+
+    .finance-item b {
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .btn-card {
+      flex: 1;
+      padding: 7px 4px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      text-decoration: none;
+    }
+
+    .btn-session-add {
+      background: #EBF8FF;
+      color: #2B6CB0;
+      font-weight: 700;
+    }
+
+    .btn-pay {
+      background: #EDF2F7;
+      color: var(--text);
+    }
+
+    .btn-wa {
+      background: #25D366;
+      color: white;
+    }
+
+    .btn-del {
+      background: #FFF5F5;
+      color: var(--danger);
+      max-width: 34px;
+    }
+
+    /* Sessions Tab */
+    .session-item {
+      background: white;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .session-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .session-title {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--primary);
+    }
+
+    .session-date {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .session-details {
+      font-size: 11px;
+      color: #4A5568;
+      margin-top: 4px;
+    }
+
+    /* Bottom Navigation Bar */
+    nav.bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: white;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 200;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 33.3%;
+      height: 100%;
+    }
+
+    .nav-btn svg {
+      width: 20px;
+      height: 20px;
+      margin-bottom: 3px;
+      fill: currentColor;
+    }
+
+    .nav-btn.active {
+      color: var(--primary);
+    }
+
+    /* Modal / Popups */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 300;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 20px 20px 0 0;
+      padding: 18px;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: slideUp 0.25s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .close-modal {
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--text-muted);
+      border: none;
+      background: none;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #4A5568;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      background: #F8FAFC;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      padding: 11px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .view-section {
+      display: none;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+  </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0F2B3D;--ink2:#1D4559;--lab:#12A594;--lab-soft:#DDF3EF;--flame:#F5A524;--flame-soft:#FEF1D6;--coral:#E4572E;--coral-soft:#FDE6DF;--violet:#5B5BD6;--violet-soft:#E8E8FB;
+--bg:#EEF5F3;--card-bg:#fff;--text:#16313F;--text-muted:#6A8290;--border:#D8E6E2;
+--primary:#0F2B3D;--primary-light:#1D4559;--secondary:#12A594;--success:#12915A;--warning:#D98A0B;--danger:#E4572E;--purple:#5B5BD6;
+--radius:18px;--shadow:0 6px 18px rgba(15,43,61,.07);
+--font:"Cairo",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;--display:"Reem Kufi","Cairo",system-ui,sans-serif}
+body{padding-top:env(safe-area-inset-top,0px);background-color:var(--bg);background-image:radial-gradient(rgba(15,43,61,.08) 1px,transparent 1px);background-size:18px 18px;user-select:auto;padding-bottom:96px}
+button{font-family:inherit}
+:focus-visible{outline:3px solid var(--flame);outline-offset:2px}
+
+/* Header */
+header.app-header{position:relative;overflow:hidden;background:linear-gradient(160deg,var(--ink),var(--ink2));color:#fff;padding:22px 18px 40px;border-radius:0 0 30px 30px;box-shadow:0 8px 24px rgba(15,43,61,.25)}
+.app-header .atom{position:absolute;left:-26px;top:-18px;width:170px;height:170px;opacity:.5;animation:spin 48s linear infinite}
+.hd-bubbles i{position:absolute;border-radius:50%;border:2px solid rgba(255,255,255,.18)}
+.hd-bubbles i:nth-child(1){width:16px;height:16px;right:24px;bottom:16px}
+.hd-bubbles i:nth-child(2){width:10px;height:10px;right:56px;bottom:34px}
+.hd-bubbles i:nth-child(3){width:22px;height:22px;right:110px;bottom:10px;border-color:rgba(245,165,36,.4)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.app-header .header-top{position:relative;margin-bottom:6px}
+.app-header .header-title{font-family:var(--display);font-size:25px;font-weight:700;letter-spacing:.2px}
+.app-header .logo{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.12);font-size:20px}
+.app-header .badge-month{background:var(--flame);color:#3B2600;font-weight:700}
+.app-header .header-sub{position:relative;font-size:13px;opacity:.85}
+.container{margin-top:-18px;position:relative}
+
+/* KPI */
+.kpi-card{border-radius:20px;border-color:var(--border)}
+.kpi-value{font-family:var(--display);font-size:26px;color:var(--ink)}
+.kpi-card.full{background:linear-gradient(135deg,var(--ink),var(--ink2));border:none}
+.kpi-card.full .kpi-value{color:#7BE0CF}
+.btn-action{border-radius:16px;padding:14px;border-color:var(--border);color:var(--ink)}
+.btn-action.primary-btn{background:var(--lab);color:#fff;box-shadow:0 6px 14px rgba(18,165,148,.35)}
+
+/* Grade tiles */
+.gtiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+.gtile{border:none;text-align:center;padding:10px 4px 9px;border-radius:14px;cursor:pointer;background:var(--lab-soft);color:var(--ink);border:1.5px solid #B7E3DC;transition:transform .15s}
+.gtile.m{background:var(--violet-soft);border-color:#CFCFF5}
+.gtile:active{transform:scale(.96)}
+.gtile b{display:block;font-family:var(--display);font-size:30px;line-height:1.1;color:var(--lab)}
+.gtile.m b{color:var(--violet)}
+.gtile i{display:block;font-style:normal;font-size:11px;font-weight:700}
+.gtile span{display:block;font-size:9.5px;color:var(--text-muted);margin-top:2px}
+
+/* Alerts */
+.alerts-card{background:var(--coral-soft);border-color:#F6C3B4;border-radius:20px}
+.alerts-header{color:#B83B16}
+.alert-item{border-color:#F6C3B4;border-radius:14px}
+
+/* Section titles */
+.section-title{font-family:var(--display);font-size:17px;color:var(--ink)}
+.tab-chip{padding:6px 13px;font-size:12px}
+.tab-chip.active{background:var(--ink);border-color:var(--ink)}
+
+/* Student card */
+.student-card{border-radius:22px;padding:14px}
+.student-card.paid{border-right:6px solid var(--success)}
+.student-card.partial{border-right:6px solid var(--warning)}
+.student-card.unpaid{border-right:6px solid var(--coral)}
+.student-name{font-family:var(--display);font-size:18px;color:var(--ink)}
+.badge-grade{background:var(--lab-soft);color:#0B766A}
+.sc-body{display:flex;gap:12px;align-items:center;margin:10px 0}
+.ring{position:relative;width:56px;height:56px;flex:none}
+.ring svg{transform:rotate(-90deg);display:block}
+.ring span{position:absolute;inset:0;display:grid;place-items:center;font:700 12px var(--display);color:var(--ink)}
+.sc-body .finance-row{flex:1;margin:0;background:#F2F8F6;border-radius:14px}
+.last-eval{font-size:11px;background:var(--flame-soft);color:#7A4F00;border-radius:10px;padding:5px 9px;margin-bottom:8px;font-weight:600}
+.card-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.btn-card{flex-direction:column;padding:8px 2px;border-radius:12px;font-size:10.5px;gap:1px;max-width:none}
+.btn-card .ic{font-size:17px;line-height:1.2}
+.btn-eval{background:var(--flame-soft);color:#8A5A00}
+.btn-file{background:var(--violet-soft);color:var(--violet)}
+.btn-session-add{background:var(--lab-soft);color:#0B766A}
+.btn-cycle{background:var(--violet-soft);color:var(--violet)}
+.btn-del{background:var(--coral-soft);color:var(--coral)}
+.progress-bar-fill{background:var(--lab)}
+
+/* Sessions */
+.session-item{border-radius:16px;border-right:4px solid var(--lab);position:relative}
+.session-title{font-size:14px}
+.sess-del{position:absolute;left:10px;bottom:8px;background:none;border:none;font-size:14px;opacity:.55;cursor:pointer}
+.danger-row{margin-bottom:12px}
+.btn-danger-soft{width:100%;background:var(--coral-soft);color:#B83B16;border:1.5px dashed #F0A58F;border-radius:14px;padding:10px;font-weight:700;font-size:13px;cursor:pointer}
+.empty{text-align:center;padding:28px 12px;color:var(--text-muted);font-size:13px}
+.empty svg{display:block;margin:0 auto 8px}
+
+/* Files */
+.upload-card{background:#fff;border:1.5px dashed var(--lab);border-radius:22px;padding:14px;margin-bottom:14px;text-align:center}
+.file-item{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid var(--border);border-radius:16px;padding:10px 12px;margin-bottom:8px;box-shadow:var(--shadow)}
+.file-item .fi{font-size:28px}
+.file-item .fm{flex:1;min-width:0}
+.file-item .fn{font-weight:700;font-size:13px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-item .fs{font-size:10.5px;color:var(--text-muted)}
+.cat-badge{display:inline-block;background:var(--violet-soft);color:var(--violet);border-radius:6px;padding:1px 7px;font-size:10px;font-weight:700;margin-left:4px}
+.file-item button{border:none;border-radius:10px;padding:8px 10px;font-weight:700;font-size:12px;cursor:pointer}
+.f-send{background:#25D366;color:#fff}
+.f-del{background:var(--coral-soft);color:var(--coral)}
+
+/* Nav */
+nav.bottom-nav{height:calc(64px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);border-radius:22px 22px 0 0;border-top:none;box-shadow:0 -6px 20px rgba(15,43,61,.1)}
+.nav-btn{width:25%;font-size:10.5px}
+.nav-btn.active{color:var(--lab)}
+.nav-btn.active svg{filter:drop-shadow(0 2px 4px rgba(18,165,148,.4))}
+
+/* Modals */
+.modal{background:rgba(15,43,61,.55)}
+.modal-content{border-radius:26px 26px 0 0}
+.modal-title{font-family:var(--display);font-size:19px;color:var(--ink)}
+.btn-submit{background:var(--ink);border-radius:14px}
+.btn-submit.wa{background:#25D366;margin-top:8px}
+.who{font-size:13px;color:var(--text-muted);margin-bottom:8px}
+.ev-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--border);font-weight:600;font-size:13px}
+.stars button{background:none;border:none;font-size:28px;color:#CBD9D5;cursor:pointer;padding:0 2px}
+.stars button.on{color:var(--flame)}
+.comp-text{direction:ltr;text-align:left;min-height:270px;font-size:13px;line-height:1.6;white-space:pre-wrap}
+.comp-actions{display:flex;gap:8px;margin:8px 0}
+.btn-soft{flex:1;background:var(--lab-soft);color:#0B766A;border:none;border-radius:12px;padding:9px;font-weight:700;font-size:12px;cursor:pointer}
+.file-pill{background:var(--violet-soft);color:var(--violet);border-radius:10px;padding:7px 10px;font-size:12px;font-weight:700;margin-bottom:8px;display:none}
+.pick-row{display:flex;justify-content:space-between;align-items:center;width:100%;background:#F2F8F6;border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;text-align:right}
+.pick-row small{color:var(--text-muted)}
+.backup-card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:12px;margin-top:16px;font-size:12px;color:var(--text-muted)}
+.backup-card .row{display:flex;gap:8px;margin-top:8px}
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:14px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:600;max-width:88%;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (prefers-reduced-motion:reduce){.app-header .atom{animation:none}*{transition:none!important}}
+
+</style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="app-header">
+    <svg class="atom" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#12A594" stroke-width="2"><ellipse cx="60" cy="60" rx="52" ry="20"/><ellipse cx="60" cy="60" rx="52" ry="20" transform="rotate(60 60 60)"/><ellipse cx="60" cy="60" rx="52" ry="20" transform="rotate(120 60 60)"/></g><circle cx="60" cy="60" r="8" fill="#F5A524"/><circle cx="112" cy="60" r="4.5" fill="#fff"/><circle cx="34" cy="105" r="4.5" fill="#fff"/><circle cx="34" cy="15" r="4.5" fill="#fff"/></svg>
+    <div class="hd-bubbles" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="header-top">
+      <div class="header-title"><span class="logo">🔬</span> دروس مستر باسم مجدي</div>
+      <div class="badge-month" id="currentMonthText"></div>
+    </div>
+    <div class="header-sub">مساعد معلم العلوم • ابتدائي وإعدادي</div>
+  </header>
+
+  <div class="container">
+
+    <!-- VIEW 1: الرئيسية والملخص -->
+    <div id="view-dashboard" class="view-section active">
+      
+      <!-- Top KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">👨‍🎓 إجمالي الطلاب</div>
+          <div class="kpi-value" id="kpiTotalStudents">0</div>
+          <div style="font-size:10px; color:var(--text-muted);">رابعة ابتدائي - تالتة إعدادي</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">📚 حصص الشهر</div>
+          <div class="kpi-value" id="kpiTotalSessions">0</div>
+          <div style="font-size:10px; color:var(--text-muted);">حصة علوم مسجلة</div>
+        </div>
+
+        <div class="kpi-card full">
+          <div class="kpi-label">💰 الموقف المالي الشامل</div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 2px;">
+            <div>
+              <span style="font-size: 11px; opacity: 0.85;">تم تحصيله: </span>
+              <span class="kpi-value" style="font-size: 18px;" id="kpiPaidTotal">0 ج</span>
+            </div>
+            <div>
+              <span style="font-size: 11px; opacity: 0.85;">المتبقي: </span>
+              <span style="font-size: 17px; font-weight: 700; color: #FEB2B2;" id="kpiRemainingTotal">0 ج</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="quick-actions">
+        <button class="btn-action primary-btn" onclick="openModal('modalSession')">
+          <span>➕</span> تسجيل حصة جديدة
+        </button>
+        <button class="btn-action" onclick="openModal('modalStudent')">
+          <span>👤</span> إضافة طالب جديد
+        </button>
+      </div>
+
+      <div class="section-title"><span>🧪 المراحل الدراسية</span></div>
+      <div class="gtiles" id="gradeTiles"></div>
+
+      <!-- Reminders Alert Card -->
+      <div class="alerts-card" id="alertsBox" style="display: none;">
+        <div class="alerts-header">
+          <span>🔔</span> اشتراكات وحسابات مستحقة المتابعة والتذكير
+        </div>
+        <div id="alertsList"></div>
+      </div>
+
+      <!-- Recent Sessions Section in Dashboard -->
+      <div class="section-title">
+        <span>📖 آخر الحصص المنفذة</span>
+        <button onclick="switchTab('sessions')" style="background:none; border:none; color:var(--primary); font-size:11px; font-weight:700; cursor:pointer;">عرض الكل ←</button>
+      </div>
+      <div id="dashboardRecentSessions"></div>
+
+      <div class="backup-card">
+        💾 <b>نسخة احتياطية لبياناتك</b> (الطلاب والحصص والتقييمات). احفظ نسخة من وقت لآخر.
+        <div class="row">
+          <button class="btn-soft" onclick="exportBackup()">⬇️ حفظ نسخة</button>
+          <button class="btn-soft" onclick="document.getElementById('importInput').click()">⬆️ استرجاع نسخة</button>
+          <input type="file" id="importInput" accept=".json,application/json" hidden onchange="importBackup(this)">
+        </div>
+      </div>
+
+    </div>
+
+    <!-- VIEW 2: قائمة الطلاب والاشتراكات -->
+    <div id="view-students" class="view-section">
+      <div class="section-title">
+        <span>👥 قائمة الطلاب والحسابات</span>
+        <button onclick="openModal('modalStudent')" style="background:var(--primary); color:white; border:none; padding:5px 10px; border-radius:8px; font-size:11px; font-weight:600;">+ إضافة طالب</button>
+      </div>
+
+      <!-- Filter tabs by Grade & Status -->
+      <div class="filter-tabs" id="gradeFilterTabs">
+        <div class="tab-chip active" onclick="filterByGrade('all', this)">كل المراحل</div>
+        <div class="tab-chip" onclick="filterByGrade('الصف الرابع الابتدائي', this)">4 ابتدائي</div>
+        <div class="tab-chip" onclick="filterByGrade('الصف الخامس الابتدائي', this)">5 ابتدائي</div>
+        <div class="tab-chip" onclick="filterByGrade('الصف السادس الابتدائي', this)">6 ابتدائي</div>
+        <div class="tab-chip" onclick="filterByGrade('الصف الأول الإعدادي', this)">1 إعدادي</div>
+        <div class="tab-chip" onclick="filterByGrade('الصف الثاني الإعدادي', this)">2 إعدادي</div>
+        <div class="tab-chip" onclick="filterByGrade('الصف الثالث الإعدادي', this)">3 إعدادي</div>
+      </div>
+
+      <div class="filter-tabs">
+        <div class="tab-chip active" onclick="filterStudents('all', this)">الكل (<span id="countAll">0</span>)</div>
+        <div class="tab-chip" onclick="filterStudents('unpaid', this)">مستحق الدفع (<span id="countUnpaid">0</span>)</div>
+        <div class="tab-chip" onclick="filterStudents('paid', this)">مسدد بالكامل (<span id="countPaid">0</span>)</div>
+        <div class="tab-chip" onclick="filterStudents('per_session', this)">بالحصة</div>
+        <div class="tab-chip" onclick="filterStudents('8_sessions', this)">كل 8 حصص</div>
+      </div>
+
+      <!-- Student Cards Container -->
+      <div id="studentsListContainer"></div>
+    </div>
+
+    <!-- VIEW 3: سجل الحصص الكامل -->
+    <div id="view-sessions" class="view-section">
+      <div class="section-title">
+        <span>📚 سجل حصص العلوم وتوثيق المنهج</span>
+        <button onclick="openModal('modalSession')" style="background:var(--primary); color:white; border:none; padding:5px 10px; border-radius:8px; font-size:11px; font-weight:600;">+ تسجيل حصة</button>
+      </div>
+      <div class="danger-row"><button class="btn-danger-soft" onclick="deleteAllSessions()">🗑️ حذف كل الحصص المسجلة</button></div>
+      <div id="fullSessionsContainer"></div>
+    </div>
+
+    <!-- VIEW 4: ملفات المراحل -->
+    <div id="view-files" class="view-section">
+      <div class="section-title"><span>📁 ملفات المراحل الدراسية</span></div>
+      <div class="upload-card">
+        <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true"><path d="M6 16a4 4 0 0 1 4-4h14l6 7h24a4 4 0 0 1 4 4v27a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z" fill="#DDF3EF" stroke="#12A594" stroke-width="3" stroke-linejoin="round"/><path d="M32 46V30m0 0-7 7m7-7 7 7" fill="none" stroke="#F5A524" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="form-group" style="text-align:right"><label>المرحلة الدراسية</label><select id="fileGradeSel" class="form-control" onchange="renderFiles()"></select></div>
+        <div class="form-group" style="text-align:right"><label>نوع الملف</label><select id="fileCatSel" class="form-control"></select></div>
+        <input type="file" id="fileInput" multiple hidden onchange="handleUpload(this)">
+        <button class="btn-submit" onclick="document.getElementById('fileInput').click()">⬆️ رفع ملفات لهذه المرحلة</button>
+      </div>
+      <div id="filesList"></div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="nav-dashboard" onclick="switchTab('dashboard')">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>الرئيسية</span>
+    </button>
+    <button class="nav-btn" id="nav-students" onclick="switchTab('students')">
+      <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      <span>الطلاب</span>
+    </button>
+    <button class="nav-btn" id="nav-sessions" onclick="switchTab('sessions')">
+      <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+      <span>الحصص</span>
+    </button>
+    <button class="nav-btn" id="nav-files" onclick="switchTab('files')">
+      <svg viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+      <span>الملفات</span>
+    </button>
+  </nav>
+
+  <!-- MODAL 1: تسجيل حصة جديدة -->
+  <div class="modal" id="modalSession">
+    <div class="modal-content">
+      <div class="modal-title">
+        <span>📖 تسجيل حصة علوم جديدة</span>
+        <button class="close-modal" onclick="closeModal('modalSession')">&times;</button>
+      </div>
+      <form id="formAddSession" onsubmit="saveSession(event)">
+        <div class="form-group">
+          <label>المرحلة الدراسية</label>
+          <select class="form-control" id="sessGrade" required>
+            <option value="الصف الرابع الابتدائي">الصف الرابع الابتدائي</option>
+            <option value="الصف الخامس الابتدائي">الصف الخامس الابتدائي</option>
+            <option value="الصف السادس الابتدائي">الصف السادس الابتدائي</option>
+            <option value="الصف الأول الإعدادي">الصف الأول الإعدادي</option>
+            <option value="الصف الثاني الإعدادي">الصف الثاني الإعدادي</option>
+            <option value="الصف الثالث الإعدادي">الصف الثالث الإعدادي</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>تاريخ الحصة</label>
+          <input type="date" class="form-control" id="sessDate" required>
+        </div>
+        <div class="form-group">
+          <label>موضوع الدرس في مادة العلوم</label>
+          <input type="text" class="form-control" id="sessTopic" placeholder="مثال: التكيف والبقاء / المادة وخواصها" required>
+        </div>
+        <div class="form-group">
+          <label>نوع الحصة</label>
+          <select class="form-control" id="sessType">
+            <option value="شرح جديد">شرح جديد</option>
+            <option value="تدريبات ومسائل">تدريبات ومسائل</option>
+            <option value="مراجعة عامة">مراجعة عامة</option>
+            <option value="اختبار شهري">اختبار شهري</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>عدد الطلاب الحاضرين</label>
+          <input type="number" class="form-control" id="sessAttendance" value="6" min="1">
+        </div>
+        <div class="form-group">
+          <label>الواجب والتكليفات (اختياري)</label>
+          <input type="text" class="form-control" id="sessHW" placeholder="مثال: حل تدريبات الدرس الأول ص 18">
+        </div>
+        <button type="submit" class="btn-submit">💾 حفظ الحصة وتحديث السجل</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: إضافة طالب جديد -->
+  <div class="modal" id="modalStudent">
+    <div class="modal-content">
+      <div class="modal-title">
+        <span>👤 إضافة طالب جديد</span>
+        <button class="close-modal" onclick="closeModal('modalStudent')">&times;</button>
+      </div>
+      <form id="formAddStudent" onsubmit="saveStudent(event)">
+        <div class="form-group">
+          <label>اسم الطالب رباعي</label>
+          <input type="text" class="form-control" id="studName" placeholder="مثال: أحمد محمود علي" required>
+        </div>
+        <div class="form-group">
+          <label>المرحلة الدراسية</label>
+          <select class="form-control" id="studGrade" required>
+            <option value="الصف الرابع الابتدائي">الصف الرابع الابتدائي</option>
+            <option value="الصف الخامس الابتدائي">الصف الخامس الابتدائي</option>
+            <option value="الصف السادس الابتدائي">الصف السادس الابتدائي</option>
+            <option value="الصف الأول الإعدادي">الصف الأول الإعدادي</option>
+            <option value="الصف الثاني الإعدادي">الصف الثاني الإعدادي</option>
+            <option value="الصف الثالث الإعدادي">الصف الثالث الإعدادي</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>طريقة المحاسبة والدفع</label>
+          <select class="form-control" id="studBillingType" onchange="toggleBillingInputs()" required>
+            <option value="8_sessions">كل 8 حصص (اشتراك شهري)</option>
+            <option value="per_session">بالحصة (دفع فوري أو تجميعي)</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="groupFee">
+          <label id="labelFee">قيمة الاشتراك لـ 8 حصص (جنيه)</label>
+          <input type="number" class="form-control" id="studFee" value="300" required>
+        </div>
+
+        <div class="form-group">
+          <label>عدد الحصص التي حضرها الطالب حتى الآن</label>
+          <input type="number" class="form-control" id="studSessionCount" value="0" min="0">
+        </div>
+
+        <div class="form-group">
+          <label>المبلغ المدفوع حالياً (جنيه)</label>
+          <input type="number" class="form-control" id="studPaid" value="0" required>
+        </div>
+
+        <div class="form-group">
+          <label>رقم هاتف ولي الأمر (واتساب)</label>
+          <input type="tel" class="form-control" id="studPhone" placeholder="010xxxxxxxx" required>
+        </div>
+
+        <button type="submit" class="btn-submit">💾 حفظ بيانات الطالب</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: تسجيل دفعة سريعة -->
+  <div class="modal" id="modalPayment">
+    <div class="modal-content">
+      <div class="modal-title">
+        <span>💵 تسجيل دفعة مالية</span>
+        <button class="close-modal" onclick="closeModal('modalPayment')">&times;</button>
+      </div>
+      <form id="formPayment" onsubmit="recordPayment(event)">
+        <input type="hidden" id="payStudentId">
+        <p id="payStudentPrompt" style="font-size:13px; margin-bottom:10px; color:#4A5568;"></p>
+        <div class="form-group">
+          <label>المبلغ المدفوع الآن (جنيه)</label>
+          <input type="number" class="form-control" id="payAmount" required>
+        </div>
+        <button type="submit" class="btn-submit">✅ تسجيل الدفعة وتحديث الحساب</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- تقييم الطالب -->
+  <div class="modal" id="modalEval"><div class="modal-content">
+    <div class="modal-title"><span>⭐ تقييم الطالب</span><button class="close-modal" onclick="closeModal('modalEval')">&times;</button></div>
+    <p class="who" id="evWho"></p>
+    <div id="evRatings"></div>
+    <div class="form-group" style="margin-top:10px"><label>ملاحظة شخصية من المعلم (بالإنجليزية - اختياري)</label>
+      <textarea id="evNote" class="form-control" rows="2" dir="ltr" placeholder="e.g. Shows great curiosity during experiments"></textarea></div>
+    <button class="btn-submit" onclick="submitEval()">💾 حفظ التقييم ومعاينة الرسالة</button>
+  </div></div>
+
+  <!-- معاينة الرسالة وإرسالها -->
+  <div class="modal" id="modalCompose"><div class="modal-content">
+    <div class="modal-title"><span id="compTitle"></span><button class="close-modal" onclick="closeModal('modalCompose')">&times;</button></div>
+    <div class="file-pill" id="compFileWrap"></div>
+    <textarea id="compText" class="form-control comp-text" dir="ltr"></textarea>
+    <div class="comp-actions">
+      <button class="btn-soft" onclick="nextVariant()">🔄 صياغة أخرى</button>
+      <button class="btn-soft" onclick="copyMsg()">📋 نسخ</button>
+    </div>
+    <button class="btn-submit wa" id="compSendFile" onclick="sendWithFile()">📎 إرسال الملف مع الرسالة</button>
+    <button class="btn-submit wa" id="compSend" onclick="sendWA()">💬 إرسال على واتساب</button>
+  </div></div>
+
+  <!-- اختيار طالب / ملف -->
+  <div class="modal" id="modalPick"><div class="modal-content">
+    <div class="modal-title"><span id="pickTitle"></span><button class="close-modal" onclick="closeModal('modalPick')">&times;</button></div>
+    <div id="pickList"></div>
+  </div></div>
+
+  <div id="toast" role="status"></div>
+
+  <script>
+    // Initial Seed Data with Primary & Prep grades + 8 sessions vs per-session
+    const initialStudents = [
+      { id: 1, name: "يوسف أحمد علي", grade: "الصف الرابع الابتدائي", phone: "01012345678", billingType: "8_sessions", fee: 250, sessionCount: 8, paid: 0 },
+      { id: 2, name: "مريم حسن إبراهيم", grade: "الصف الخامس الابتدائي", phone: "01123456789", billingType: "per_session", fee: 35, sessionCount: 4, paid: 140 },
+      { id: 3, name: "كريم سامح عادل", grade: "الصف السادس الابتدائي", phone: "01234567890", billingType: "8_sessions", fee: 280, sessionCount: 5, paid: 280 },
+      { id: 4, name: "أحمد محمود علي", grade: "الصف الأول الإعدادي", phone: "01098765432", billingType: "8_sessions", fee: 300, sessionCount: 8, paid: 150 },
+      { id: 5, name: "سلمى حسام مصطفى", grade: "الصف الثاني الإعدادي", phone: "01555667788", billingType: "per_session", fee: 45, sessionCount: 5, paid: 180 },
+      { id: 6, name: "نور محمد حسنين", grade: "الصف الثالث الإعدادي", phone: "01144332211", billingType: "8_sessions", fee: 400, sessionCount: 6, paid: 400 }
+    ];
+
+    const initialSessions = [
+      { id: 1, date: "2026-10-02", grade: "الصف الرابع الابتدائي", topic: "التكيف والبقاء: طرق تكيف الحيوانات في البيئة الصحراوية", type: "شرح جديد", att: 6, hw: "حل تدريبات كتاب الأنشطة ص 10" },
+      { id: 2, date: "2026-10-04", grade: "الصف الخامس الابتدائي", topic: "احتياجات النبات: عملية البناء الضوئي وأجزاء النبات", type: "شرح وتدريبات", att: 5, hw: "ورقة عمل مقارنة الجذور والسيقان" },
+      { id: 3, date: "2026-10-05", grade: "الصف السادس الابتدائي", topic: "الخلية كنظام: مكونات الخلية النباتية والحيوانية", type: "شرح وتجارب", att: 7, hw: "رسم مبسط للخلية مع كتابة البيانات" },
+      { id: 4, date: "2026-10-08", grade: "الصف الأول الإعدادي", topic: "المادة وخواصها: الكثافة والتطبيقات الحياتية", type: "شرح ومسائل", att: 6, hw: "حل مسائل الكثافة ص 14" },
+      { id: 5, date: "2026-10-10", grade: "الصف الثاني الإعدادي", topic: "الجدول الدوري الحديث وتدرج الخواص", type: "تدريبات ومسائل", att: 8, hw: "تدريبات بنك المعرفة" },
+      { id: 6, date: "2026-10-12", grade: "الصف الثالث الإعدادي", topic: "التمثيل البياني للحركة في خط مستقيم والعجلة المنتظمة", type: "مسائل وامتحانات", att: 7, hw: "حل 5 مسائل على العجلة" }
+    ];
+
+    function getStoredData(key, fallback) {
+      try {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : fallback;
+      } catch (e) { return fallback; }
+    }
+
+    function setStoredData(key, val) {
+      try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+    }
+
+    let students = getStoredData("bassem_students_v2", initialStudents);
+    let sessions = getStoredData("bassem_sessions_v2", initialSessions);
+    let currentStudentFilter = "all";
+    let currentGradeFilter = "all";
+
+    const todayStr = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    document.getElementById("sessDate").value = todayStr;
+
+    function toggleBillingInputs() {
+      const type = document.getElementById("studBillingType").value;
+      const label = document.getElementById("labelFee");
+      const input = document.getElementById("studFee");
+      if (type === "8_sessions") {
+        label.innerText = "قيمة الاشتراك لـ 8 حصص (جنيه)";
+        input.value = "300";
+      } else {
+        label.innerText = "سعر الحصة الواحدة (جنيه)";
+        input.value = "40";
+      }
+    }
+
+    // Helper: Calculate Due & Remaining
+    function calcStudentFinance(s) {
+      let due = 0;
+      if (s.billingType === "8_sessions") {
+        due = Number(s.fee || 0);
+      } else {
+        // per session
+        due = (Number(s.sessionCount || 0)) * (Number(s.fee || 0));
+      }
+      const paid = Number(s.paid || 0);
+      const remaining = Math.max(0, due - paid);
+      return { due, paid, remaining };
+    }
+
+    // Refresh Application UI
+    function refreshApp() {
+      // 1. KPIs
+      document.getElementById("kpiTotalStudents").innerText = students.length;
+      document.getElementById("kpiTotalSessions").innerText = sessions.length;
+
+      let totalPaid = 0;
+      let totalRemaining = 0;
+      let overdueAlerts = [];
+
+      students.forEach(s => {
+        const fin = calcStudentFinance(s);
+        totalPaid += fin.paid;
+        totalRemaining += fin.remaining;
+
+        // Alert conditions:
+        // Case 1: 8 sessions reached and not paid in full
+        if (s.billingType === "8_sessions" && s.sessionCount >= 8 && fin.remaining > 0) {
+          overdueAlerts.push({ student: s, reason: `أتم 8 حصص (متبقي: ${fin.remaining} ج)` });
+        } else if (fin.remaining > 0) {
+          overdueAlerts.push({ student: s, reason: `مستحق سداد: ${fin.remaining} ج` });
+        }
+      });
+
+      document.getElementById("kpiPaidTotal").innerText = totalPaid.toLocaleString() + " ج";
+      document.getElementById("kpiRemainingTotal").innerText = totalRemaining.toLocaleString() + " ج";
+
+      // 2. Overdue Alerts Box
+      const alertsBox = document.getElementById("alertsBox");
+      const alertsList = document.getElementById("alertsList");
+      alertsList.innerHTML = "";
+
+      if (overdueAlerts.length > 0) {
+        alertsBox.style.display = "block";
+        overdueAlerts.slice(0, 4).forEach(item => {
+          const s = item.student;
+          const fin = calcStudentFinance(s);
+          
+          let waMsg = "";
+          if (s.billingType === "8_sessions") {
+            waMsg = `🌟 Mr Bassem Magdy | Academic Support\n\nأهلًا بحضرتك، نتمنى لكم يومًا سعيدًا 💙\n\nمع حضرتك فريق دعم مستر باسم مجدي.\n\nنود تذكير حضرتك بخصوص تجديد اشتراك الـ 8 حصص لمادة العلوم الخاص بالطالب (${s.name})، حيث أتم (${s.sessionCount}) حصص.\n\n💳 قيمة الاشتراك المستحق: (${fin.remaining}) جنيه.\n\nنرجو من حضرتك التكرم باستكمال إجراءات السداد في الموعد المناسب، للمساعدة في تنظيم الحصص وضمان انتظام العملية التعليمية.\n\nشكرًا لثقة حضرتك في مستر باسم، ونتمنى لابننا دوام التقدم والنجاح. 🎓\n\nمع خالص التقدير،\nفريق دعم مستر باسم مجدي 💙`;
+          } else {
+            waMsg = `🌟 Mr Bassem Magdy | Academic Support\n\nأهلًا بحضرتك، نتمنى لكم يومًا سعيدًا 💙\n\nمع حضرتك فريق دعم مستر باسم مجدي.\n\nنود تذكير حضرتك بخصوص رسوم حصص مادة العلوم الخاصة بالطالب (${s.name})، عن عدد (${s.sessionCount}) حصص.\n\n💳 إجمالي المبلغ المستحق: (${fin.remaining}) جنيه.\n\nنرجو من حضرتك التكرم باستكمال إجراءات السداد في الموعد المناسب، للمساعدة في تنظيم الحصص وضمان انتظام العملية التعليمية.\n\nشكرًا لثقة حضرتك في مستر باسم، ونتمنى لابننا دوام التقدم والنجاح. 🎓\n\nمع خالص التقدير،\nفريق دعم مستر باسم مجدي 💙`;
+          }
+
+          const waUrl = `https://wa.me/20${s.phone.replace(/^0+/, '')}?text=${encodeURIComponent(waMsg)}`;
+
+          const div = document.createElement("div");
+          div.className = "alert-item";
+          div.innerHTML = `
+            <div>
+              <b>${s.name}</b> <span style="color:#C53030; font-weight:700;">(${item.reason})</span>
+              <div style="font-size:10px; color:#718096;">${s.grade} • ${s.billingType === '8_sessions' ? 'نظام 8 حصص' : 'نظام بالحصة'}</div>
+            </div>
+            <a href="${waUrl}" target="_blank" class="btn-wa-sm">
+              💬 تذكير واتساب
+            </a>
+          `;
+          alertsList.appendChild(div);
+        });
+      } else {
+        alertsBox.style.display = "none";
+      }
+
+      // 3. Render Dashboard Recent Sessions
+      const dashSessions = document.getElementById("dashboardRecentSessions");
+      dashSessions.innerHTML = "";
+      sessions.slice(-3).reverse().forEach(sess => {
+        const item = document.createElement("div");
+        item.className = "session-item";
+        item.innerHTML = `
+          <div class="session-header">
+            <span class="session-title">${sess.topic}</span>
+            <span class="session-date">${sess.date}</span>
+          </div>
+          <div class="session-details">
+            🏷️ <b>${sess.grade}</b> | 👨‍🎓 حضور: ${sess.att} طلاب | ${sess.type}
+          </div>
+        `;
+        dashSessions.appendChild(item);
+      });
+
+      renderStudentsList();
+      renderFullSessions();
+    }
+
+    function renderStudentsList() {
+      const container = document.getElementById("studentsListContainer");
+      container.innerHTML = "";
+
+      let countPaid = 0;
+      let countUnpaid = 0;
+
+      const filtered = students.filter(s => {
+        const fin = calcStudentFinance(s);
+        if (fin.remaining === 0) countPaid++;
+        else countUnpaid++;
+
+        // Filter by grade
+        if (currentGradeFilter !== "all" && s.grade !== currentGradeFilter) return false;
+
+        // Filter by status
+        if (currentStudentFilter === "paid") return fin.remaining === 0;
+        if (currentStudentFilter === "unpaid") return fin.remaining > 0;
+        if (currentStudentFilter === "8_sessions") return s.billingType === "8_sessions";
+        if (currentStudentFilter === "per_session") return s.billingType === "per_session";
+        return true;
+      });
+
+      document.getElementById("countAll").innerText = students.length;
+      document.getElementById("countPaid").innerText = countPaid;
+      document.getElementById("countUnpaid").innerText = countUnpaid;
+
+      filtered.forEach(s => {
+        const fin = calcStudentFinance(s);
+        let statusClass = "status-unpaid";
+        let statusText = "لم يسدد";
+        let cardBorderClass = "unpaid";
+
+        if (fin.remaining === 0) {
+          statusClass = "status-paid";
+          statusText = "مسدد بالكامل";
+          cardBorderClass = "paid";
+        } else if (fin.paid > 0) {
+          statusClass = "status-partial";
+          statusText = "سداد جزئي";
+          cardBorderClass = "partial";
+        }
+
+        const is8 = s.billingType === "8_sessions";
+        const progressPct = is8 ? Math.min(100, (s.sessionCount / 8) * 100) : 0;
+        const is8Complete = is8 && s.sessionCount >= 8;
+
+        let waMsg = "";
+        if (is8) {
+          waMsg = `🌟 Mr Bassem Magdy | Academic Support\n\nأهلًا بحضرتك، نتمنى لكم يومًا سعيدًا 💙\n\nمع حضرتك فريق دعم مستر باسم مجدي.\n\nنود تذكير حضرتك بخصوص تجديد اشتراك الـ 8 حصص لمادة العلوم الخاص بالطالب (${s.name})، حيث أتم (${s.sessionCount}) حصص.\n\n💳 قيمة الاشتراك المستحق: (${fin.remaining}) جنيه.\n\nنرجو من حضرتك التكرم باستكمال إجراءات السداد في الموعد المناسب، للمساعدة في تنظيم الحصص وضمان انتظام العملية التعليمية.\n\nشكرًا لثقة حضرتك في مستر باسم، ونتمنى لابننا دوام التقدم والنجاح. 🎓\n\nمع خالص التقدير،\nفريق دعم مستر باسم مجدي 💙`;
+        } else {
+          waMsg = `🌟 Mr Bassem Magdy | Academic Support\n\nأهلًا بحضرتك، نتمنى لكم يومًا سعيدًا 💙\n\nمع حضرتك فريق دعم مستر باسم مجدي.\n\nنود تذكير حضرتك بخصوص رسوم حصص مادة العلوم الخاصة بالطالب (${s.name})، عن عدد (${s.sessionCount}) حصص.\n\n💳 إجمالي المبلغ المستحق: (${fin.remaining}) جنيه.\n\nنرجو من حضرتك التكرم باستكمال إجراءات السداد في الموعد المناسب، للمساعدة في تنظيم الحصص وضمان انتظام العملية التعليمية.\n\nشكرًا لثقة حضرتك في مستر باسم، ونتمنى لابننا دوام التقدم والنجاح. 🎓\n\nمع خالص التقدير،\nفريق دعم مستر باسم مجدي 💙`;
+        }
+        const waUrl = `https://wa.me/20${s.phone.replace(/^0+/, '')}?text=${encodeURIComponent(waMsg)}`;
+
+        const card = document.createElement("div");
+        card.className = `student-card ${cardBorderClass}`;
+        card.innerHTML = `
+          <div class="student-head">
+            <div>
+              <div class="student-name">${s.name}</div>
+              <div class="student-meta">
+                <span class="badge-grade">${s.grade}</span>
+                <span class="badge-billing ${is8 ? 'billing-8' : 'billing-per'}">
+                  ${is8 ? '🔄 نظام كل 8 حصص' : '💵 نظام بالحصة'}
+                </span>
+                <span>📞 ${s.phone}</span>
+              </div>
+            </div>
+            <span class="status-badge ${statusClass}">${statusText}</span>
+          </div>
+
+          <!-- Session Progress / Count -->
+          <div class="session-tracker-box">
+            <div style="display:flex; justify-content:space-between; font-size:11px;">
+              <span><b>📚 الحصص المنجزة:</b> ${s.sessionCount} ${is8 ? 'من 8 حصص' : 'حصة'}</span>
+              ${is8Complete ? '<span style="color:var(--danger); font-weight:700;">⚠️ أتم 8 حصص (مستحق التجديد)</span>' : ''}
+            </div>
+            ${is8 ? `
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill ${is8Complete ? 'complete' : ''}" style="width: ${progressPct}%;"></div>
+              </div>
+            ` : ''}
+          </div>
+          
+          <div class="finance-row">
+            <div class="finance-item">
+              <span>${is8 ? 'قيمة الـ 8 حصص' : 'سعر الحصة'}</span>
+              <b>${s.fee} ج</b>
+            </div>
+            <div class="finance-item">
+              <span>إجمالي المستحق</span>
+              <b>${fin.due} ج</b>
+            </div>
+            <div class="finance-item">
+              <span>المدفوع</span>
+              <b style="color:var(--success);">${fin.paid} ج</b>
+            </div>
+            <div class="finance-item">
+              <span>المتبقي</span>
+              <b style="color:${fin.remaining > 0 ? 'var(--danger)' : 'var(--text)'};">${fin.remaining} ج</b>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <button class="btn-card btn-session-add" onclick="incrementStudentSession(${s.id})" title="إضافة حصة تم حضورها">
+              ➕ حصة (${s.sessionCount})
+            </button>
+            <button class="btn-card btn-pay" onclick="openPaymentModal(${s.id})">
+              💵 سداد
+            </button>
+            ${is8Complete ? `
+              <button class="btn-card" style="background:#FAF5FF; color:#6B46C1; font-weight:700;" onclick="reset8Cycle(${s.id})" title="بدء دورة 8 حصص جديدة">
+                🔄 دورة جديدة
+              </button>
+            ` : ''}
+            <a href="${waUrl}" target="_blank" class="btn-card btn-wa">💬 تذكير</a>
+            <button class="btn-card btn-del" onclick="deleteStudent(${s.id})">🗑️</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderFullSessions() {
+      const container = document.getElementById("fullSessionsContainer");
+      container.innerHTML = "";
+      sessions.slice().reverse().forEach(sess => {
+        const item = document.createElement("div");
+        item.className = "session-item";
+        item.innerHTML = `
+          <div class="session-header">
+            <span class="session-title">${sess.topic}</span>
+            <span class="session-date">${sess.date}</span>
+          </div>
+          <div class="session-details">
+            🏷️ <b>${sess.grade}</b> | 👨‍🎓 حضور: ${sess.att} طلاب | ${sess.type}
+          </div>
+          ${sess.hw ? `<div style="font-size:11px; color:#2B6CB0; margin-top:3px;">📝 الواجب: ${sess.hw}</div>` : ''}
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // Switch Tab
+    function switchTab(tabId) {
+      document.querySelectorAll(".view-section").forEach(v => v.classList.remove("active"));
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+
+      document.getElementById(`view-${tabId}`).classList.add("active");
+      document.getElementById(`nav-${tabId}`).classList.add("active");
+      window.scrollTo(0, 0);
+    }
+
+    // Filter by Grade
+    function filterByGrade(grade, elem) {
+      currentGradeFilter = grade;
+      document.querySelectorAll("#gradeFilterTabs .tab-chip").forEach(c => c.classList.remove("active"));
+      elem.classList.add("active");
+      renderStudentsList();
+    }
+
+    // Filter by Status / Type
+    function filterStudents(filter, elem) {
+      currentStudentFilter = filter;
+      elem.parentElement.querySelectorAll(".tab-chip").forEach(c => c.classList.remove("active"));
+      elem.classList.add("active");
+      renderStudentsList();
+    }
+
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add("active");
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove("active");
+    }
+
+    // 1-Click Increment Session for a Student
+    function incrementStudentSession(studentId) {
+      const s = students.find(st => st.id === studentId);
+      if (s) {
+        s.sessionCount = Number(s.sessionCount || 0) + 1;
+        setStoredData("bassem_students_v2", students);
+        refreshApp();
+      }
+    }
+
+    // Reset 8-Session Cycle after completion & renewal
+    function reset8Cycle(studentId) {
+      const s = students.find(st => st.id === studentId);
+      if (s && confirm(`هل تريد بدء دورة 8 حصص جديدة للطالب ${s.name} وتصفير عداد الحصص؟`)) {
+        s.sessionCount = 0;
+        s.paid = 0; // Reset paid for the new cycle
+        setStoredData("bassem_students_v2", students);
+        refreshApp();
+        alert(`✅ تم بدء دورة جديدة للطالب ${s.name}`);
+      }
+    }
+
+    // Save Session
+    function saveSession(e) {
+      e.preventDefault();
+      const grade = document.getElementById("sessGrade").value;
+      const newSess = {
+        id: Date.now(),
+        grade: grade,
+        date: document.getElementById("sessDate").value,
+        topic: document.getElementById("sessTopic").value,
+        type: document.getElementById("sessType").value,
+        att: Number(document.getElementById("sessAttendance").value || 0),
+        hw: document.getElementById("sessHW").value
+      };
+      sessions.push(newSess);
+      setStoredData("bassem_sessions_v2", sessions);
+
+      // Ask if user wants to auto-increment session count for all students in this grade
+      const gradeStudents = students.filter(s => s.grade === grade);
+      if (gradeStudents.length > 0 && confirm(`تم حفظ الحصة! هل تود إضافة (+1 حصة) تلقائياً لجميع طلاب ${grade} المسجلين (${gradeStudents.length} طلاب)؟`)) {
+        gradeStudents.forEach(st => {
+          st.sessionCount = Number(st.sessionCount || 0) + 1;
+        });
+        setStoredData("bassem_students_v2", students);
+      }
+
+      closeModal("modalSession");
+      document.getElementById("formAddSession").reset();
+      document.getElementById("sessDate").value = todayStr;
+      refreshApp();
+      alert("✅ تم تسجيل الحصة بنجاح وتحديث العدادات!");
+    }
+
+    // Save Student
+    function saveStudent(e) {
+      e.preventDefault();
+      const newStud = {
+        id: Date.now(),
+        name: document.getElementById("studName").value,
+        grade: document.getElementById("studGrade").value,
+        billingType: document.getElementById("studBillingType").value,
+        fee: Number(document.getElementById("studFee").value),
+        sessionCount: Number(document.getElementById("studSessionCount").value || 0),
+        paid: Number(document.getElementById("studPaid").value || 0),
+        phone: document.getElementById("studPhone").value
+      };
+      students.push(newStud);
+      setStoredData("bassem_students_v2", students);
+      closeModal("modalStudent");
+      document.getElementById("formAddStudent").reset();
+      toggleBillingInputs();
+      refreshApp();
+      alert("✅ تم إضافة الطالب بنجاح!");
+    }
+
+    // Record Payment
+    function openPaymentModal(studentId) {
+      const s = students.find(st => st.id === studentId);
+      if (!s) return;
+      const fin = calcStudentFinance(s);
+      document.getElementById("payStudentId").value = s.id;
+      document.getElementById("payStudentPrompt").innerText = `تسجيل دفعة للطالب: ${s.name} (${s.grade}) - المتبقي: ${fin.remaining} ج`;
+      document.getElementById("payAmount").value = fin.remaining;
+      openModal("modalPayment");
+    }
+
+    function recordPayment(e) {
+      e.preventDefault();
+      const sId = Number(document.getElementById("payStudentId").value);
+      const amount = Number(document.getElementById("payAmount").value);
+      const s = students.find(st => st.id === sId);
+      if (s) {
+        s.paid = Number(s.paid || 0) + amount;
+        setStoredData("bassem_students_v2", students);
+        closeModal("modalPayment");
+        refreshApp();
+        alert(`✅ تم تسجيل سداد مبلغ ${amount} ج للطالب ${s.name} بنجاح!`);
+      }
+    }
+
+    // Delete Student
+    function deleteStudent(sId) {
+      if (confirm("هل أنت متأكد من حذف هذا الطالب من السجل؟")) {
+        students = students.filter(s => s.id !== sId);
+        setStoredData("bassem_students_v2", students);
+        refreshApp();
+      }
+    }
+
+    // Init run
+    refreshApp();
+  </script>
+<script>
+/* ===== الإضافات الجديدة (نفس مفاتيح التخزين القديمة، فالبيانات تفضل زي ما هي) ===== */
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let evals = getStoredData("bassem_evals_v1", {});
+const TEACHER = 'Mr. Bassem Magdy';
+const SIGN = `Best regards,\n${TEACHER}\nScience Teacher`;
+const GRADES = [
+  {k:'الصف الرابع الابتدائي', sym:'4', st:'p', en:'Primary 4'},
+  {k:'الصف الخامس الابتدائي', sym:'5', st:'p', en:'Primary 5'},
+  {k:'الصف السادس الابتدائي', sym:'6', st:'p', en:'Primary 6'},
+  {k:'الصف الأول الإعدادي', sym:'1', st:'m', en:'Prep 1'},
+  {k:'الصف الثاني الإعدادي', sym:'2', st:'m', en:'Prep 2'},
+  {k:'الصف الثالث الإعدادي', sym:'3', st:'m', en:'Prep 3'}
+];
+const gradeEn = g => (GRADES.find(x => x.k === g) || {}).en || g;
+const CATS = [
+  {k:'worksheet', ar:'ورقة عمل'}, {k:'homework', ar:'واجب'}, {k:'revision', ar:'مراجعة'},
+  {k:'exam', ar:'اختبار تدريبي'}, {k:'notes', ar:'ملخص الدرس'}
+];
+const CRITERIA = [
+  {k:'participation', ar:'المشاركة في الحصة', en:'Class participation', focus:'taking a more active part in class discussions and experiments'},
+  {k:'homework', ar:'الالتزام بالواجبات', en:'Homework completion', focus:'completing homework regularly and on time'},
+  {k:'understanding', ar:'استيعاب المنهج', en:'Understanding of concepts', focus:'revising the key concepts so they become fully secure'},
+  {k:'behavior', ar:'السلوك والتركيز', en:'Focus and discipline', focus:'staying focused and organised throughout the session'}
+];
+
+/* ---------- أدوات مساعدة ---------- */
+const fn = s => s.name.trim().split(/\s+/)[0];
+const pickV = (a, v) => a[v % a.length];
+const money = n => 'EGP ' + Number(n).toLocaleString('en-US');
+const latestSess = g => sessions.filter(x => x.grade === g).slice(-1)[0];
+const stars = n => '★'.repeat(n) + '☆'.repeat(5 - n);
+function waLink(p, t) {
+  let d = String(p || '').replace(/\D/g, '');
+  if (d.startsWith('00')) d = d.slice(2);
+  if (!(d.startsWith('20') && d.length >= 12)) d = '20' + d.replace(/^0+/, '');
+  return 'https://wa.me/' + d + '?text=' + encodeURIComponent(t);
+}
+async function saveFile(filename, data) {
+  let d = null;
+  try { d = await claude.use('downloads'); } catch (e) {}
+  if (!d) {
+    /* PWA/متصفح عادي: تنزيل مباشر */
+    try {
+      const blob = data instanceof Blob ? data : new Blob([data], {type: /\.json$/i.test(filename) ? 'application/json' : 'application/octet-stream'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      return true;
+    } catch (e) { toast('الحفظ غير متاح في هذا العرض'); return false; }
+  }
+  try { await d.save({filename, data}); return true; }
+  catch (e) { toast(e && e.code === 'declined' ? 'تم الإلغاء' : e && e.code === 'rejected_extension' ? 'نوع الملف غير مدعوم للتنزيل' : 'تعذر حفظ الملف'); return false; }
+}
+let _tt;
+function toast(m) {
+  const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show');
+  clearTimeout(_tt); _tt = setTimeout(() => t.classList.remove('show'), 2600);
+}
+const flask = `<svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><path d="M26 6h12M29 6v18L12 50a5 5 0 0 0 4.4 7.5h31.2A5 5 0 0 0 52 50L35 24V6" fill="none" stroke="#12A594" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 42h28l6 9a5 5 0 0 1-4.4 6.5H16.4A5 5 0 0 1 12 51z" fill="#DDF3EF"/><circle cx="28" cy="34" r="2.6" fill="#F5A524"/><circle cx="37" cy="29" r="1.9" fill="#F5A524"/></svg>`;
+const emptyState = t => `<div class="empty">${flask}${t}</div>`;
+
+/* ---------- الرسائل الإنجليزية حسب الموقف ---------- */
+function reminderMsg(s, v) {
+  const fin = calcStudentFinance(s), is8 = s.billingType === '8_sessions', done = is8 && s.sessionCount >= 8, n = s.name;
+  const hi = pickV(['Dear Parent,\n\nI hope you and your family are doing well. 😊', 'Dear Parent,\n\nGreetings, and I hope you are having a lovely day. 🌟'], v);
+  const close = pickV(['Thank you for your continued trust and support.', 'Thank you very much for your cooperation — it is truly appreciated. 🙏'], v);
+  let body;
+  if (done) {
+    const amt = fin.remaining > 0 ? fin.remaining : s.fee;
+    body = pickV([
+      `${n} has completed all 8 sessions of the current Science package — well done! 🎉\n\nTo begin the next cycle, the renewal fee is:\n💳 ${money(amt)}\n\nKindly arrange the payment at your earliest convenience.`,
+      `This is a gentle reminder that ${n}'s 8-session Science package has now been completed.\n\n💳 Renewal fee: ${money(amt)}\n\nRenewing promptly helps us keep the lesson schedule running without interruption.`], v);
+  } else if (fin.remaining > 0 && is8) {
+    body = pickV([
+      `I would like to kindly remind you of the outstanding balance on ${n}'s Science package (${s.sessionCount} of 8 sessions attended so far).\n\n💳 Remaining balance: ${money(fin.remaining)}`,
+      `Just a friendly note regarding ${n}'s current Science package. A balance remains to be settled:\n\n💳 Amount due: ${money(fin.remaining)}`], v);
+  } else if (fin.remaining > 0) {
+    body = pickV([
+      `I would like to kindly remind you of the fees for ${n}'s Science sessions (${s.sessionCount} sessions attended).\n\n💳 Amount due: ${money(fin.remaining)}`,
+      `Just a friendly reminder about the balance for ${n}'s Science sessions to date (${s.sessionCount} sessions).\n\n💳 Total outstanding: ${money(fin.remaining)}`], v);
+  } else {
+    body = `${n}'s account is fully settled and up to date. ✅ There is nothing due at the moment — thank you for being so prompt!`;
+  }
+  return `${hi}\n\n${body}\n\n${close}\n\n${SIGN}`;
+}
+function receiptMsg(s, amt, v) {
+  const fin = calcStudentFinance(s);
+  const hi = pickV(['Dear Parent,\n\nThank you very much! ✅', 'Dear Parent,\n\nPayment received with thanks! ✅'], v);
+  const tail = fin.remaining > 0
+    ? `Remaining balance: ${money(fin.remaining)}.`
+    : `${s.name}'s account is now fully settled. 🎉`;
+  return `${hi}\n\nWe have received your payment of ${money(amt)} for ${s.name}'s Science sessions.\n\n${tail}\n\nWe truly appreciate your trust and look forward to seeing ${fn(s)} progress further.\n\n${SIGN}`;
+}
+function tierOf(a) { return a >= 4.5 ? 'excellent' : a >= 3.5 ? 'good' : a >= 2.5 ? 'progress' : 'attention'; }
+const TIER_LABEL = {excellent:'Outstanding', good:'Very Good', progress:'Developing Well', attention:'Needs Extra Support'};
+function evalMsg(s, sc, note, v) {
+  const avg = CRITERIA.reduce((t, c) => t + sc[c.k], 0) / CRITERIA.length, tier = tierOf(avg), f = fn(s), ls = latestSess(s.grade);
+  const T = {
+    excellent: [`${f} has been performing outstandingly. Their enthusiasm and understanding are a real pleasure to see — please pass on my congratulations! 🌟`, `It is a pleasure to report that ${f} is doing exceptionally well and is one of the strongest contributors in class. Keep up the wonderful work! 🌟`],
+    good: [`${f} is making very good progress and shows a solid grasp of the material. With a little extra consistency, excellent results are well within reach. 👍`, `${f} is doing very well overall, and I am pleased with the effort shown in class. A few small steps will take this to the next level. 👍`],
+    progress: [`${f} is making steady progress and I can see genuine effort. A few targeted areas will help lift performance further. 💪`, `${f} is moving in the right direction. With regular practice at home, I expect a clear improvement in the coming weeks. 💪`],
+    attention: [`I would like to share some concerns about ${f}'s current progress. With a little extra support at home and in class, I am confident we can turn this around together. 🤝`, `${f} needs some additional support at this stage. I would be glad to discuss a simple plan with you so we can help ${f} get back on track. 🤝`]
+  };
+  const low = CRITERIA.slice().sort((a, b) => sc[a.k] - sc[b.k])[0];
+  const focus = (tier !== 'excellent' || sc[low.k] <= 3) ? `\n📌 Focus area for the coming weeks: ${low.focus}.\n` : '';
+  let overview = `📊 Session overview\n• Sessions attended: ${s.sessionCount}`;
+  if (ls) overview += `\n• Latest topic: ${ls.topic}`;
+  if (ls && ls.hw) overview += `\n• Latest homework: ${ls.hw}`;
+  const rows = CRITERIA.map(c => `• ${c.en}: ${stars(sc[c.k])} (${sc[c.k]}/5)`).join('\n');
+  const noteTxt = note ? `\n💬 Teacher's note: ${note}\n` : '';
+  const close = pickV(['Please do not hesitate to contact me if you would like to discuss anything further.', 'I am always happy to talk about how we can best support your child — feel free to message me anytime.'], v);
+  return `Dear Parent,\n\nHere is ${s.name}'s progress report for Science (${gradeEn(s.grade)}).\n\n${overview}\n\n⭐ Performance ratings\n${rows}\n\nOverall: ${avg.toFixed(1)} / 5 — ${TIER_LABEL[tier]}\n\n${pickV(T[tier], v)}\n${focus}${noteTxt}\n${close}\n\n${SIGN}`;
+}
+function fileMsg(s, f, v) {
+  const ls = latestSess(s.grade), topic = ls ? ` (latest topic: ${ls.topic})` : '', c = fn(s);
+  const hi = pickV([`Dear Parent,\n\nI hope you are doing well. 😊`, `Dear Parent,\n\nGreetings from Mr. Bassem's Science class. 🌟`], v);
+  const B = {
+    worksheet: `Please find attached the Science worksheet for ${s.name}${topic}.\n\nIt reinforces what we covered in class. Kindly encourage ${c} to try it independently first — we will review it together in the next session.`,
+    homework: `Please find attached ${s.name}'s Science homework${topic}.\n\nKindly make sure it is completed before our next session. If ${c} finds any part challenging, please let me know and I will gladly help.`,
+    revision: `Please find attached a Science revision sheet to help ${s.name} prepare for the upcoming exams${topic}.\n\nA little revision each day goes a long way — I recommend going through it in short, regular sessions.`,
+    exam: `Please find attached a practice test for ${s.name}${topic}.\n\nIt works best when attempted in a quiet setting within the time limit. Afterwards, please send me a photo of the answers so I can give detailed feedback.`,
+    notes: `Please find attached the lesson summary for ${s.name}${topic}.\n\nThese notes cover the key points from class and are ideal for quick revision before the next session.`
+  };
+  const close = pickV(['Thank you for your support, and please let me know if the file does not open properly.', 'Thank you for your cooperation — please feel free to reach out with any questions.'], v);
+  return `${hi}\n\n${B[f.cat] || B.worksheet}\n\n${close}\n\n${SIGN}`;
+}
+
+/* ---------- نافذة المعاينة والإرسال ---------- */
+let comp = null;
+function openComposer({title, phone, gen, file}) {
+  comp = {phone, gen, v: 0, file};
+  document.getElementById('compTitle').textContent = title;
+  const pill = document.getElementById('compFileWrap');
+  pill.style.display = file ? 'block' : 'none';
+  pill.textContent = file ? '📎 ' + file.name : '';
+  document.getElementById('compSendFile').style.display = file ? 'block' : 'none';
+  document.getElementById('compSend').textContent = file ? '💬 إرسال الرسالة فقط' : '💬 إرسال على واتساب';
+  regen(); openModal('modalCompose');
+}
+function regen() { document.getElementById('compText').value = comp.gen(comp.v); }
+function nextVariant() { comp.v++; regen(); }
+function sendWA() { window.open(waLink(comp.phone, document.getElementById('compText').value), '_blank'); }
+function copyMsg() {
+  const ta = document.getElementById('compText'); ta.select();
+  try { navigator.clipboard.writeText(ta.value).catch(() => document.execCommand('copy')); } catch (e) { document.execCommand('copy'); }
+  toast('تم نسخ الرسالة');
+}
+async function sendWithFile() {
+  const txt = document.getElementById('compText').value;
+  let rec; try { rec = await idbTx('readonly', st => st.get(comp.file.id)); } catch (e) {}
+  if (!rec) { toast('تعذر قراءة الملف'); return; }
+  const f = new File([rec.blob], rec.name, {type: rec.type || 'application/octet-stream'});
+  if (navigator.canShare && navigator.canShare({files: [f]})) {
+    try { await navigator.share({files: [f], text: txt}); return; }
+    catch (e) { if (e.name === 'AbortError') return; }
+  }
+  const ok = await saveFile(rec.name, rec.blob);
+  if (ok) toast('تم حفظ الملف — أرفقه من 📎 داخل واتساب');
+  window.open(waLink(comp.phone, txt), '_blank');
+}
+
+/* ---------- التقييم ---------- */
+let evDraft = {}, evSid = null;
+function openEval(id) {
+  const s = students.find(x => x.id === id); if (!s) return;
+  evSid = id; evDraft = {};
+  document.getElementById('evWho').textContent = `${s.name} — ${s.grade}`;
+  document.getElementById('evNote').value = '';
+  renderEvRows(); openModal('modalEval');
+}
+function renderEvRows() {
+  document.getElementById('evRatings').innerHTML = CRITERIA.map(c => `<div class="ev-row"><span>${c.ar}</span><div class="stars">${[1,2,3,4,5].map(n => `<button type="button" class="${(evDraft[c.k] || 0) >= n ? 'on' : ''}" onclick="setRate('${c.k}',${n})" aria-label="${n}">★</button>`).join('')}</div></div>`).join('');
+}
+function setRate(k, n) { evDraft[k] = n; renderEvRows(); }
+function submitEval() {
+  if (CRITERIA.some(c => !evDraft[c.k])) { toast('من فضلك قيّم كل العناصر'); return; }
+  const s = students.find(x => x.id === evSid), note = document.getElementById('evNote').value.trim(), scores = {...evDraft};
+  const avg = CRITERIA.reduce((t, c) => t + scores[c.k], 0) / CRITERIA.length;
+  (evals[evSid] = evals[evSid] || []).push({date: todayStr, scores, avg, note});
+  setStoredData('bassem_evals_v1', evals);
+  closeModal('modalEval'); refreshApp();
+  openComposer({title: `تقرير تقييم — ${s.name}`, phone: s.phone, gen: v => evalMsg(s, scores, note, v)});
+}
+function openReminder(id) {
+  const s = students.find(x => x.id === id); if (!s) return;
+  openComposer({title: `رسالة تذكير — ${s.name}`, phone: s.phone, gen: v => reminderMsg(s, v)});
+}
+
+/* ---------- المدفوعات (إيصال إنجليزي بعد السداد) ---------- */
+function recordPayment(e) {
+  e.preventDefault();
+  const sId = Number(document.getElementById('payStudentId').value), amount = Number(document.getElementById('payAmount').value);
+  const s = students.find(st => st.id === sId); if (!s) return;
+  s.paid = Number(s.paid || 0) + amount;
+  setStoredData('bassem_students_v2', students);
+  closeModal('modalPayment'); refreshApp();
+  openComposer({title: `إيصال سداد — ${s.name}`, phone: s.phone, gen: v => receiptMsg(s, amount, v)});
+}
+
+/* ---------- حذف الحصص ---------- */
+function deleteAllSessions() {
+  if (!sessions.length) { toast('لا توجد حصص مسجلة'); return; }
+  if (!confirm(`سيتم حذف كل الحصص المسجلة (${sessions.length} حصة) نهائيًا.\nهل أنت متأكد؟`)) return;
+  const reset = confirm('هل تريد أيضًا تصفير عدّاد الحصص لكل الطلاب؟\n\nموافق = تصفير العدّادات\nإلغاء = إبقاؤها كما هي\n\n(تنبيه: طلاب نظام "بالحصة" سيتغير المستحق عليهم عند التصفير)');
+  sessions = []; setStoredData('bassem_sessions_v2', sessions);
+  if (reset) { students.forEach(s => s.sessionCount = 0); setStoredData('bassem_students_v2', students); }
+  refreshApp(); toast('تم حذف كل الحصص');
+}
+function deleteSession(id) {
+  if (!confirm('حذف هذه الحصة؟')) return;
+  sessions = sessions.filter(x => x.id !== id); setStoredData('bassem_sessions_v2', sessions); refreshApp();
+}
+
+/* ---------- الملفات (IndexedDB) ---------- */
+const idb = new Promise((res, rej) => {
+  try {
+    const r = indexedDB.open('bassem_files_v1', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('files', {keyPath: 'id'});
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  } catch (e) { rej(e); }
+});
+function idbTx(mode, fnc) {
+  return idb.then(db => new Promise((res, rej) => {
+    const tx = db.transaction('files', mode), req = fnc(tx.objectStore('files'));
+    tx.oncomplete = () => res(req && req.result); tx.onerror = () => rej(tx.error);
+  }));
+}
+const fileIcon = f => /pdf/i.test(f.type) || /\.pdf$/i.test(f.name) ? '📕' : /image/.test(f.type) ? '🖼️' : /word|\.docx?$/i.test(f.type + f.name) ? '📘' : /sheet|excel|\.xlsx?$/i.test(f.type + f.name) ? '📗' : /presentation|powerpoint|\.pptx?$/i.test(f.type + f.name) ? '📙' : '📄';
+const fmtSize = b => b > 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
+const catAr = k => (CATS.find(c => c.k === k) || CATS[0]).ar;
+async function renderFiles() {
+  const g = document.getElementById('fileGradeSel').value, box = document.getElementById('filesList');
+  let all = [];
+  try { all = await idbTx('readonly', st => st.getAll()); }
+  catch (e) { box.innerHTML = emptyState('المتصفح الحالي لا يدعم حفظ الملفات داخل التطبيق.'); return; }
+  const list = all.filter(f => f.grade === g).sort((a, b) => b.id - a.id);
+  box.innerHTML = list.length ? list.map(f => `<div class="file-item"><div class="fi">${fileIcon(f)}</div><div class="fm"><div class="fn">${esc(f.name)}</div><div class="fs"><span class="cat-badge">${catAr(f.cat)}</span>${fmtSize(f.size)} • ${f.added}</div></div><button class="f-send" onclick="sendFile(${f.id})">💬 إرسال</button><button class="f-del" onclick="deleteFile(${f.id})">🗑️</button></div>`).join('')
+    : emptyState('لا توجد ملفات لهذه المرحلة بعد.<br>ارفع ورقة عمل أو مراجعة لتسهل مشاركتها.');
+}
+async function handleUpload(inp) {
+  const g = document.getElementById('fileGradeSel').value, cat = document.getElementById('fileCatSel').value;
+  try {
+    for (const f of inp.files) {
+      const id = Date.now() + Math.floor(Math.random() * 1000);
+      await idbTx('readwrite', st => st.put({id, grade: g, cat, name: f.name, type: f.type, size: f.size, blob: f, added: todayStr}));
+    }
+    toast('تم رفع الملفات'); 
+  } catch (e) { toast('تعذر حفظ الملف'); }
+  inp.value = ''; renderFiles();
+}
+async function deleteFile(id) {
+  if (!confirm('حذف هذا الملف؟')) return;
+  await idbTx('readwrite', st => st.delete(id)); renderFiles();
+}
+function openPick(title, html) {
+  document.getElementById('pickTitle').textContent = title;
+  document.getElementById('pickList').innerHTML = html; openModal('modalPick');
+}
+async function sendFile(fid) {
+  const f = await idbTx('readonly', st => st.get(fid)); if (!f) return;
+  const list = students.filter(s => s.grade === f.grade);
+  if (!list.length) { toast('لا يوجد طلاب مسجلون في هذه المرحلة'); return; }
+  openPick('اختر ولي الأمر', list.map(s => `<button class="pick-row" onclick="composeFile(${s.id},${fid})"><span>${esc(s.name)}</span><span>💬</span></button>`).join(''));
+}
+async function pickFileForStudent(sid) {
+  const s = students.find(x => x.id === sid); if (!s) return;
+  let all = []; try { all = await idbTx('readonly', st => st.getAll()); } catch (e) {}
+  const list = all.filter(f => f.grade === s.grade);
+  if (!list.length) { toast('لا توجد ملفات لهذه المرحلة — ارفعها من تبويب الملفات'); return; }
+  openPick('اختر الملف المراد إرساله', list.map(f => `<button class="pick-row" onclick="composeFile(${sid},${f.id})"><span>${fileIcon(f)} ${esc(f.name)}</span><small>${catAr(f.cat)}</small></button>`).join(''));
+}
+async function composeFile(sid, fid) {
+  const f = await idbTx('readonly', st => st.get(fid)), s = students.find(x => x.id === sid); if (!f || !s) return;
+  closeModal('modalPick');
+  openComposer({title: `إرسال ملف — ${s.name}`, phone: s.phone, gen: v => fileMsg(s, f, v), file: {id: f.id, name: f.name}});
+}
+
+/* ---------- النسخ الاحتياطي ---------- */
+function exportBackup() {
+  saveFile(`bassem-backup-${todayStr}.json`, JSON.stringify({v: 1, students, sessions, evals}, null, 1)).then(ok => { if (ok) toast('تم حفظ النسخة الاحتياطية'); });
+}
+function importBackup(inp) {
+  const f = inp.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const d = JSON.parse(r.result);
+      if (!Array.isArray(d.students) || !Array.isArray(d.sessions)) throw 0;
+      if (!confirm('سيتم استبدال البيانات الحالية بالنسخة الاحتياطية. متابعة؟')) return;
+      students = d.students; sessions = d.sessions; evals = d.evals || {};
+      setStoredData('bassem_students_v2', students); setStoredData('bassem_sessions_v2', sessions); setStoredData('bassem_evals_v1', evals);
+      refreshApp(); toast('تم استرجاع البيانات');
+    } catch (e) { toast('الملف غير صالح'); }
+  };
+  r.readAsText(f); inp.value = '';
+}
+
+/* ---------- الرسم: بطاقات الطلاب والحصص والتنبيهات ---------- */
+function ring(pct, color, label) {
+  const C = 138.2;
+  return `<div class="ring"><svg viewBox="0 0 56 56" width="56" height="56"><circle cx="28" cy="28" r="22" fill="none" stroke="#E3EEEB" stroke-width="6"/><circle cx="28" cy="28" r="22" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(C * pct / 100).toFixed(1)} ${C}"/></svg><span>${label}</span></div>`;
+}
+function renderStudentsList() {
+  const c = document.getElementById('studentsListContainer'); c.innerHTML = '';
+  let cp = 0, cu = 0;
+  const list = students.filter(s => {
+    const fin = calcStudentFinance(s);
+    if (fin.remaining === 0) cp++; else cu++;
+    if (currentGradeFilter !== 'all' && s.grade !== currentGradeFilter) return false;
+    if (currentStudentFilter === 'paid') return fin.remaining === 0;
+    if (currentStudentFilter === 'unpaid') return fin.remaining > 0;
+    if (currentStudentFilter === '8_sessions') return s.billingType === '8_sessions';
+    if (currentStudentFilter === 'per_session') return s.billingType === 'per_session';
+    return true;
+  });
+  document.getElementById('countAll').innerText = students.length;
+  document.getElementById('countPaid').innerText = cp;
+  document.getElementById('countUnpaid').innerText = cu;
+  if (!list.length) { c.innerHTML = emptyState('لا يوجد طلاب في هذا التصنيف.'); return; }
+  list.forEach(s => {
+    const fin = calcStudentFinance(s), is8 = s.billingType === '8_sessions', done = is8 && s.sessionCount >= 8;
+    let sc = 'status-unpaid', st = 'لم يسدد', cb = 'unpaid';
+    if (fin.remaining === 0) { sc = 'status-paid'; st = 'مسدد بالكامل'; cb = 'paid'; }
+    else if (fin.paid > 0) { sc = 'status-partial'; st = 'سداد جزئي'; cb = 'partial'; }
+    const pct = is8 ? Math.min(100, s.sessionCount / 8 * 100) : 100;
+    const le = (evals[s.id] || []).slice(-1)[0];
+    const card = document.createElement('div');
+    card.className = `student-card ${cb}`;
+    card.innerHTML = `
+      <div class="student-head">
+        <div><div class="student-name">${esc(s.name)}</div>
+          <div class="student-meta"><span class="badge-grade">${esc(s.grade)}</span>
+            <span class="badge-billing ${is8 ? 'billing-8' : 'billing-per'}">${is8 ? '🔄 كل 8 حصص' : '💵 بالحصة'}</span>
+            <span>📞 ${esc(s.phone)}</span></div></div>
+        <span class="status-badge ${sc}">${st}</span>
+      </div>
+      <div class="sc-body">
+        ${ring(pct, done ? '#E4572E' : '#12A594', is8 ? `${s.sessionCount}/8` : s.sessionCount)}
+        <div class="finance-row">
+          <div class="finance-item"><span>${is8 ? 'الاشتراك' : 'الحصة'}</span><b>${s.fee} ج</b></div>
+          <div class="finance-item"><span>المستحق</span><b>${fin.due} ج</b></div>
+          <div class="finance-item"><span>المدفوع</span><b style="color:var(--success)">${fin.paid} ج</b></div>
+          <div class="finance-item"><span>المتبقي</span><b style="color:${fin.remaining > 0 ? 'var(--coral)' : 'var(--text)'}">${fin.remaining} ج</b></div>
+        </div>
+      </div>
+      ${done ? '<div class="last-eval" style="background:var(--coral-soft);color:#B83B16">⚠️ أتم 8 حصص — مستحق التجديد</div>' : ''}
+      ${le ? `<div class="last-eval">⭐ آخر تقييم: ${le.avg.toFixed(1)}/5 • ${TIER_LABEL[tierOf(le.avg)]} • ${le.date}</div>` : ''}
+      <div class="card-actions">
+        <button class="btn-card btn-session-add" onclick="incrementStudentSession(${s.id})"><span class="ic">➕</span>حصة</button>
+        <button class="btn-card btn-pay" onclick="openPaymentModal(${s.id})"><span class="ic">💵</span>سداد</button>
+        <button class="btn-card btn-eval" onclick="openEval(${s.id})"><span class="ic">⭐</span>تقييم</button>
+        <button class="btn-card btn-wa" onclick="openReminder(${s.id})"><span class="ic">💬</span>تذكير</button>
+        <button class="btn-card btn-file" onclick="pickFileForStudent(${s.id})"><span class="ic">📎</span>ملف</button>
+        ${done ? `<button class="btn-card btn-cycle" onclick="reset8Cycle(${s.id})"><span class="ic">🔄</span>دورة جديدة</button>` : ''}
+        <button class="btn-card btn-del" onclick="deleteStudent(${s.id})"><span class="ic">🗑️</span>حذف</button>
+      </div>`;
+    c.appendChild(card);
+  });
+}
+function sessCard(x, del) {
+  return `<div class="session-item"><div class="session-header"><span class="session-title">${esc(x.topic)}</span><span class="session-date">${esc(x.date)}</span></div>
+    <div class="session-details">🏷️ <b>${esc(x.grade)}</b> | 👨‍🎓 حضور: ${x.att} | ${esc(x.type)}</div>
+    ${x.hw ? `<div style="font-size:11px;color:var(--ink2);margin-top:3px">📝 الواجب: ${esc(x.hw)}</div>` : ''}
+    ${del ? `<button class="sess-del" onclick="deleteSession(${x.id})" aria-label="حذف">🗑️</button>` : ''}</div>`;
+}
+function renderFullSessions() {
+  const c = document.getElementById('fullSessionsContainer');
+  c.innerHTML = sessions.length ? sessions.slice().reverse().map(x => sessCard(x, true)).join('') : emptyState('لا توجد حصص مسجلة.<br>سجّل أول حصة من الرئيسية.');
+}
+function renderGradeTiles() {
+  document.getElementById('gradeTiles').innerHTML = GRADES.map(g => {
+    const n = students.filter(s => s.grade === g.k).length, m = sessions.filter(x => x.grade === g.k).length;
+    return `<button class="gtile ${g.st}" onclick="goGrade('${g.k}')"><b>${g.sym}</b><i>${g.st === 'p' ? 'ابتدائي' : 'إعدادي'}</i><span>${n} طالب • ${m} حصة</span></button>`;
+  }).join('');
+}
+function goGrade(g) {
+  switchTab('students');
+  const chip = [...document.querySelectorAll('#gradeFilterTabs .tab-chip')].find(c => (c.getAttribute('onclick') || '').includes(g));
+  if (chip) filterByGrade(g, chip);
+}
+function rebuildAlerts() {
+  const list = document.getElementById('alertsList'), box = document.getElementById('alertsBox'); list.innerHTML = '';
+  const items = [];
+  students.forEach(s => {
+    const fin = calcStudentFinance(s);
+    if (s.billingType === '8_sessions' && s.sessionCount >= 8 && fin.remaining > 0) items.push({s, r: `أتم 8 حصص (متبقي: ${fin.remaining} ج)`});
+    else if (fin.remaining > 0) items.push({s, r: `مستحق سداد: ${fin.remaining} ج`});
+  });
+  box.style.display = items.length ? 'block' : 'none';
+  items.slice(0, 5).forEach(({s, r}) => {
+    const d = document.createElement('div'); d.className = 'alert-item';
+    d.innerHTML = `<div><b>${esc(s.name)}</b> <span style="color:#B83B16;font-weight:700">(${r})</span><div style="font-size:10px;color:var(--text-muted)">${esc(s.grade)} • ${s.billingType === '8_sessions' ? 'نظام 8 حصص' : 'نظام بالحصة'}</div></div><button class="btn-wa-sm" onclick="openReminder(${s.id})">💬 تذكير</button>`;
+    list.appendChild(d);
+  });
+}
+
+/* ---------- ربط كل شيء بالتطبيق القديم ---------- */
+const _refresh = refreshApp;
+refreshApp = function () { _refresh(); rebuildAlerts(); renderGradeTiles(); };
+const _switch = switchTab;
+switchTab = function (t) { _switch(t); if (t === 'files') renderFiles(); };
+
+document.getElementById('currentMonthText').textContent = new Date().toLocaleDateString('ar-EG', {month: 'long', year: 'numeric'});
+document.getElementById('fileGradeSel').innerHTML = GRADES.map(g => `<option value="${g.k}">${g.k}</option>`).join('');
+document.getElementById('fileCatSel').innerHTML = CATS.map(c => `<option value="${c.k}">${c.ar}</option>`).join('');
+refreshApp();
+
+</script>
+<script>
+/* تسجيل الـ Service Worker (يعمل فقط على HTTPS أو localhost) */
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then((reg) => {
+      reg.addEventListener('updatefound', () => {
+        const nw = reg.installing;
+        if (nw) nw.addEventListener('statechange', () => {
+          if (nw.state === 'installed' && navigator.serviceWorker.controller && typeof toast === 'function') toast('تم تحديث التطبيق — أعد فتحه للحصول على آخر نسخة');
+        });
+      });
+    }).catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

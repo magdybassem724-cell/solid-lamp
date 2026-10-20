@@ -1,0 +1,21 @@
+{
+  "id": "/",
+  "name": "مساعد إدارة الدروس - مستر باسم مجدي",
+  "short_name": "دروس مستر باسم",
+  "description": "تطبيق لإدارة الطلاب والحصص والمدفوعات والملفات والتقييمات",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0F2B3D",
+  "background_color": "#EEF5F3",
+  "categories": ["education", "productivity"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
